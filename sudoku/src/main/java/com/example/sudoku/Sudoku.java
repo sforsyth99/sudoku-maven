@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
- 
-
 
 public class Sudoku {
 
@@ -445,8 +443,8 @@ public class Sudoku {
         Solver solver = new Solver(clues);
         solver.solve(true);
         int[][] values = solver.getValues();
-       // logger.info("Here is the solution:");
-       // logger.info(SolverHelper.formatSudoku(values));
+        logger.debug("Here is the solution:");
+        logger.debug(SolverHelper.formatSudoku(values));
 
         for (int i = 0; i < values.length; i++) {
             for (int j = 0; j < values[0].length; j++) {
@@ -458,11 +456,11 @@ public class Sudoku {
     }
 
     private void newGameP() {
-        logger.info("The sudoku is going to make a new game now...");
+        logger.debug("The sudoku is going to make a new game now...");
         int[][] nextPuzzle = SampleSudokus.getNextPuzzle();
         initSudokuPuzzle(nextPuzzle);
         initSudokuGamePlay();
-        logger.info(SolverHelper.formatSudoku(nextPuzzle));
+        logger.debug(SolverHelper.formatSudoku(nextPuzzle));
         SudokuChangeEvent event = SudokuChangeEvent.makeNewGameEvent(this, clues, guesses, autoCandidates,
                 userCandidates);
         fireStateChanged(event);
@@ -477,18 +475,18 @@ public class Sudoku {
         // - for each row block there are 6 choices. Pick one of 6
         // - for each col block there are 6 choices. Pick one of 6
 
-//      logger.info("Original:");
-//      logger.info(SolverHelper.formatSudoku(clues));
-//      logger.info("\n\n90:");
-//      logger.info(SolverHelper.formatSudoku(rotateArray90(clues)));
-//      logger.info("\n\n180:");
-//      logger.info(SolverHelper.formatSudoku(rotateArray180(clues)));
-//      logger.info("\n\n270:");
-//      logger.info(SolverHelper.formatSudoku(rotateArray270(clues)));
+        logger.debug("Original:");
+        logger.debug(SolverHelper.formatSudoku(clues));
+        logger.debug("\n\n90:");
+        logger.debug(SolverHelper.formatSudoku(rotateArray90(clues)));
+        logger.debug("\n\n180:");
+        logger.debug(SolverHelper.formatSudoku(rotateArray180(clues)));
+        logger.debug("\n\n270:");
+        logger.debug(SolverHelper.formatSudoku(rotateArray270(clues)));
 
         clues = rotateArray180(clues);
 
-        // logger.info("\n\nNumbers swapped: 1 and 9");
+        logger.debug("\n\nNumbers swapped: 1 and 9");
         swapNumbers(clues, 1, 9);
         swapNumbers(clues, 2, 6);
         swapNumbers(clues, 3, 2);
@@ -498,22 +496,22 @@ public class Sudoku {
         swapNumbers(clues, 7, 8);
         swapNumbers(clues, 8, 3);
         swapNumbers(clues, 9, 7);
-        // logger.info(SolverHelper.formatSudoku(clues));
+        logger.debug(SolverHelper.formatSudoku(clues));
 
-        // logger.info("\n\nRows swapped 2 and 3");
+        logger.debug("\n\nRows swapped 2 and 3");
         swapRows(clues, 0, 2);
         swapRows(clues, 3, 4);
         swapRows(clues, 7, 8);
-        // logger.info(SolverHelper.formatSudoku(clues));
+        logger.debug(SolverHelper.formatSudoku(clues));
 
-        // logger.info("\n\nCols swapped 2 and 3");
+        logger.debug("\n\nCols swapped 2 and 3");
         swapColumns(clues, 1, 2);
         swapColumns(clues, 4, 5);
         swapColumns(clues, 6, 8);
-        // logger.info(SolverHelper.formatSudoku(clues));
+        logger.debug(SolverHelper.formatSudoku(clues));
 
-//      logger.info("\n\nAfter shuffling:");
-//      logger.info(SolverHelper.formatSudoku(clues));
+        logger.debug("\n\nAfter shuffling:");
+        logger.debug(SolverHelper.formatSudoku(clues));
 
         return shuffled;
     }
