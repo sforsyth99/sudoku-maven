@@ -9,8 +9,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <name>sudoku</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://github.com/sforsyth99/sudoku-maven</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
