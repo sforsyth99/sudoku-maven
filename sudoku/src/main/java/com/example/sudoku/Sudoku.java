@@ -7,6 +7,11 @@ import javax.swing.event.ChangeListener;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+ 
+
+
 public class Sudoku {
 
     // Listens to the view to detect user actions
@@ -58,6 +63,8 @@ public class Sudoku {
     private int[][] clues = SampleSudokus.getNextPuzzle();
     private int[][] guesses; // The user's guesses and the sample clues
     private CandidateSet[][] autoCandidates; // automatically-generated candidates
+
+    private Logger logger = LoggerFactory.getLogger("Sudoku");
 
     public enum OverrideType {
         NOT_OVERRIDDEN, OVERRIDE_FALSE, OVERRIDE_TRUE
@@ -438,8 +445,8 @@ public class Sudoku {
         Solver solver = new Solver(clues);
         solver.solve(true);
         int[][] values = solver.getValues();
-        System.out.println("Here is the solution:");
-        System.out.println(SolverHelper.formatSudoku(values));
+       // logger.info("Here is the solution:");
+       // logger.info(SolverHelper.formatSudoku(values));
 
         for (int i = 0; i < values.length; i++) {
             for (int j = 0; j < values[0].length; j++) {
@@ -451,11 +458,11 @@ public class Sudoku {
     }
 
     private void newGameP() {
-        System.out.println("The sudoku is going to make a new game now...");
+        logger.info("The sudoku is going to make a new game now...");
         int[][] nextPuzzle = SampleSudokus.getNextPuzzle();
         initSudokuPuzzle(nextPuzzle);
         initSudokuGamePlay();
-        System.out.println(SolverHelper.formatSudoku(nextPuzzle));
+        logger.info(SolverHelper.formatSudoku(nextPuzzle));
         SudokuChangeEvent event = SudokuChangeEvent.makeNewGameEvent(this, clues, guesses, autoCandidates,
                 userCandidates);
         fireStateChanged(event);
@@ -470,18 +477,18 @@ public class Sudoku {
         // - for each row block there are 6 choices. Pick one of 6
         // - for each col block there are 6 choices. Pick one of 6
 
-//      System.out.println("Original:");
-//      System.out.println(SolverHelper.formatSudoku(clues));
-//      System.out.println("\n\n90:");
-//      System.out.println(SolverHelper.formatSudoku(rotateArray90(clues)));
-//      System.out.println("\n\n180:");
-//      System.out.println(SolverHelper.formatSudoku(rotateArray180(clues)));
-//      System.out.println("\n\n270:");
-//      System.out.println(SolverHelper.formatSudoku(rotateArray270(clues)));
+//      logger.info("Original:");
+//      logger.info(SolverHelper.formatSudoku(clues));
+//      logger.info("\n\n90:");
+//      logger.info(SolverHelper.formatSudoku(rotateArray90(clues)));
+//      logger.info("\n\n180:");
+//      logger.info(SolverHelper.formatSudoku(rotateArray180(clues)));
+//      logger.info("\n\n270:");
+//      logger.info(SolverHelper.formatSudoku(rotateArray270(clues)));
 
         clues = rotateArray180(clues);
 
-        // System.out.println("\n\nNumbers swapped: 1 and 9");
+        // logger.info("\n\nNumbers swapped: 1 and 9");
         swapNumbers(clues, 1, 9);
         swapNumbers(clues, 2, 6);
         swapNumbers(clues, 3, 2);
@@ -491,22 +498,22 @@ public class Sudoku {
         swapNumbers(clues, 7, 8);
         swapNumbers(clues, 8, 3);
         swapNumbers(clues, 9, 7);
-        // System.out.println(SolverHelper.formatSudoku(clues));
+        // logger.info(SolverHelper.formatSudoku(clues));
 
-        // System.out.println("\n\nRows swapped 2 and 3");
+        // logger.info("\n\nRows swapped 2 and 3");
         swapRows(clues, 0, 2);
         swapRows(clues, 3, 4);
         swapRows(clues, 7, 8);
-        // System.out.println(SolverHelper.formatSudoku(clues));
+        // logger.info(SolverHelper.formatSudoku(clues));
 
-        // System.out.println("\n\nCols swapped 2 and 3");
+        // logger.info("\n\nCols swapped 2 and 3");
         swapColumns(clues, 1, 2);
         swapColumns(clues, 4, 5);
         swapColumns(clues, 6, 8);
-        // System.out.println(SolverHelper.formatSudoku(clues));
+        // logger.info(SolverHelper.formatSudoku(clues));
 
-//      System.out.println("\n\nAfter shuffling:");
-//      System.out.println(SolverHelper.formatSudoku(clues));
+//      logger.info("\n\nAfter shuffling:");
+//      logger.info(SolverHelper.formatSudoku(clues));
 
         return shuffled;
     }

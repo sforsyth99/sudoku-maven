@@ -241,7 +241,6 @@ public class SudokuGridUI extends JFrame {
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("New Game Button Pressed!");
                 sudokuViewListener.newGame();
             }
         });
@@ -258,7 +257,6 @@ public class SudokuGridUI extends JFrame {
         solveGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Solve Game Button Pressed!");
                 sudokuViewListener.solvePuzzle();
             }
         });

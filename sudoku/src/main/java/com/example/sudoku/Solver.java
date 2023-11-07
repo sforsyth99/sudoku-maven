@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Solver {
     String ANSI_RESET = "\u001B[0m";
@@ -12,10 +14,12 @@ public class Solver {
     String ANSI_GREEN = "\u001B[32m";
     String ANSI_YELLOW = "\u001B[33m";
     String ANSI_BLUE = "\u001B[34m";
-    String ANSI_PURPLE = "\u001B[35m"; 
- 
+    String ANSI_PURPLE = "\u001B[35m";
+
     int[][] values;
     CandidateSet[][] candidates;
+
+    private Logger logger = LoggerFactory.getLogger("Solver");
 
     public Solver(int[][] clues) {
         if (clues.length == 0 || clues[0].length == 0)
@@ -37,28 +41,28 @@ public class Solver {
 
             // Sole Candidate
             if (solveSoleCandidates()) {
-                //System.out.println("Solve Sole Candidates");
+                logger.debug("Solve Sole Candidates");
                 progressMade = true;
-                //System.out.println(SolverHelper.formatSudoku(values));
+                logger.debug(SolverHelper.formatSudoku(values));
             }
 
             if (!progressMade) {
                 // Unique Candidate - rows
-                //System.out.println("Unique candidates - ROWS");
+                logger.debug("Unique candidates - ROWS");
                 for (int i = 0; i < Sudoku.NUM_ROWS; i++) {
                     if (solveUniqueCandidates(SolverHelper.makeIndexesForRow(i)))
                         progressMade = true;
                 }
 
                 // Unique Candidate - columns
-                //System.out.println("Unique candidates - COLS");
+                logger.debug("Unique candidates - COLS");
                 for (int i = 0; i < Sudoku.NUM_COLS; i++) {
                     if (solveUniqueCandidates(SolverHelper.makeIndexesForCol(i)))
                         progressMade = true;
                 }
 
                 // Unique Candidate - blocks
-                //System.out.println("Unique candidates - BLOCKS");
+                logger.debug("Unique candidates - BLOCKS");
                 for (int hBlock = 0; hBlock < Sudoku.NUM_H_BLOCKS; hBlock++) {
                     for (int vBlock = 0; vBlock < Sudoku.NUM_V_BLOCKS; vBlock++) {
                         if (solveUniqueCandidates(SolverHelper.makeIndexesForBlockByBlockNum(hBlock, vBlock)))
@@ -74,19 +78,19 @@ public class Solver {
 
             if (!progressMade) {
 
-                //System.out.println("Aligned candidates - ROWS");
+                logger.debug("Aligned candidates - ROWS");
                 for (int row = 0; row < Sudoku.NUM_ROWS; row++) {
                     if (checkBlocksForAlignedCandidates(SolverHelper.makeIndexesForRow(row)))
                         progressMade = true;
                 }
 
-                //System.out.println("Aligned candidates - COLS");
+                logger.debug("Aligned candidates - COLS");
                 for (int i = 0; i < Sudoku.NUM_COLS; i++) {
                     if (checkBlocksForAlignedCandidates(SolverHelper.makeIndexesForCol(i)))
                         progressMade = true;
                 }
 
-                //System.out.println("Aligned candidates - BLOCKS");
+                logger.debug("Aligned candidates - BLOCKS");
                 for (int hBlock = 0; hBlock < Sudoku.NUM_H_BLOCKS; hBlock++) {
                     for (int vBlock = 0; vBlock < Sudoku.NUM_V_BLOCKS; vBlock++) {
                         if (checkRowsColsForAlignedCandidates(
@@ -96,27 +100,27 @@ public class Solver {
                 }
             }
 
-        //  System.out.println(SolverHelper.formatSudoku(values));
+            logger.debug(SolverHelper.formatSudoku(values));
 
             if (!progressMade) {
                 // Naked and Hidden tuples - rows
                 // Checks for naked and hidden doubles, triples, and quadruples and
                 // removes candidates if found
-                //System.out.println("Tuples - ROWS");
+                logger.debug("Tuples - ROWS");
                 for (int row = 0; row < Sudoku.NUM_ROWS; row++) {
                     if (updateCandidatesForTuples(SolverHelper.makeIndexesForRow(row)))
                         progressMade = true;
                 }
 
                 // Naked and Hidden tuples - columns
-                //System.out.println("Tuples - COLS");
+                logger.debug("Tuples - COLS");
                 for (int i = 0; i < Sudoku.NUM_COLS; i++) {
                     if (updateCandidatesForTuples(SolverHelper.makeIndexesForCol(i)))
                         progressMade = true;
                 }
 
                 // Naked and Hidden tuples - blocks
-                //System.out.println("Tuples - BLOCKS");
+                logger.debug("Tuples - BLOCKS");
                 for (int hBlock = 0; hBlock < Sudoku.NUM_H_BLOCKS; hBlock++) {
                     for (int vBlock = 0; vBlock < Sudoku.NUM_V_BLOCKS; vBlock++) {
                         if (updateCandidatesForTuples(SolverHelper.makeIndexesForBlockByBlockNum(hBlock, vBlock)))
@@ -131,13 +135,13 @@ public class Solver {
 //                  progressMade = true;
 //          }
             if (!progressMade && doForcingChains) {
-                //System.out.println(SolverHelper.formatSudoku(values));
-                //System.out.println(ANSI_RED + "FORCING CHAINS BEGIN");
+                logger.debug(SolverHelper.formatSudoku(values));
+                logger.debug(ANSI_RED + "FORCING CHAINS BEGIN");
 
                 if (checkForcingChainsPairs())
                     progressMade = true;
-                //System.out.println("FORCING CHAINS END" + ANSI_RESET);
-                //System.out.println(SolverHelper.formatSudoku(values));
+                logger.debug("FORCING CHAINS END" + ANSI_RESET);
+                logger.debug(SolverHelper.formatSudoku(values));
 
             }
 
@@ -148,15 +152,13 @@ public class Solver {
 //          }
 
             if (!progressMade) {
-                //System.out.println(ANSI_RED + "Couldn't find anything else." + ANSI_RESET);
+                logger.debug(ANSI_RED + "Couldn't find anything else." + ANSI_RESET);
                 return false;
             }
         }
-        //System.out.println("Solved!");
+        logger.debug("Solved!");
         return true;
     }
-
-
 
     // By the time we get to a forcing chain, there is a good chance that for
     // puzzles that aren't really hard, one of the choices will solve the puzzle.
@@ -186,7 +188,6 @@ public class Solver {
 
             Integer optionA = (Integer) candidatesAsArray[0];
             Integer optionB = (Integer) candidatesAsArray[1];
-        
 
             // make 2 more copies of the puzzle, set each copy to have a
             // different value, and see how far you can get solving them.
@@ -205,13 +206,15 @@ public class Solver {
             Solver solverA = new Solver(valuesCopyA);
             Solver solverB = new Solver(valuesCopyB);
 
-            //System.out.printf(ANSI_PURPLE + "Solving A: %d,%d. OptionA: %d\n", (row + 1), (col + 1), (optionA + 1));
+            logger.debug(ANSI_PURPLE + "Solving A: {},{}. OptionA: {}\n", (row + 1), (col + 1),
+                    (optionA + 1));
             solverA.solve(false);
-            //System.out.printf(SolverHelper.formatSudoku(solverA.getValues()));
-            //System.out.printf(ANSI_GREEN + "Solving B: %d,%d. OptionA: %d\n", (row + 1), (col + 1), (optionB + 1));
+            logger.debug(SolverHelper.formatSudoku(solverA.getValues()));
+            logger.debug(
+                    ANSI_GREEN + "Solving B: {},{}. OptionA: {}\n", (row + 1), (col + 1), (optionB + 1));
             solverB.solve(false);
-            //System.out.println(SolverHelper.formatSudoku(solverB.getValues()));
-            //System.out.println(ANSI_RESET);
+            logger.debug(SolverHelper.formatSudoku(solverB.getValues()));
+            logger.debug(ANSI_RESET);
 
             // Look at the solutions - did either choice end up solving the puzzle?
             int[][] solutionA = solverA.getValues();
@@ -302,7 +305,6 @@ public class Solver {
 //      return false;
 //  }
 
-
     private List<CellIndex> getIndexesOfCellsWithCandidate(int candidate, List<CellIndex> indexes) {
 
         if (candidate < CandidateSet.MIN_CANDIDATE_VALUE || candidate > CandidateSet.MAX_CANDIDATE_VALUE)
@@ -349,10 +351,10 @@ public class Solver {
             switch (candidateList.size()) {
             case 2:
                 if (SolverHelper.inSameBlock(candidateList.get(0), candidateList.get(1))) {
-                    //System.out.printf(
-                    //      "Row/Col has 2 candidates also in same block. Candidate: %d\nCell 1: %d, %d\nCell 2 %d, %d\n",
-                    //      (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-                    //      (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
+                    logger.debug(
+                            "Row/Col has 2 candidates also in same block. Candidate: {}\nCell 1: {}, {}\nCell 2: {}, {}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
 
                     List<CellIndex> blockCells = SolverHelper.makeIndexesForBlockByCellIndex(
                             candidateList.get(0).getRow(), candidateList.get(0).getCol());
@@ -362,11 +364,11 @@ public class Solver {
                 break;
             case 3:
                 if (SolverHelper.inSameBlock(candidateList.get(0), candidateList.get(1), candidateList.get(2))) {
-                    //System.out.printf(
-                    //      "Row/Col has 3 candidates also in same block. Candidate: %d\nCell 1: %d, %d\nCell 2 %d, %d\nCell 3: %d, %d\n",
-                    //      (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-                    //      (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
-                    //      (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
+                    logger.debug(
+                            "Row/Col has 3 candidates also in same block. Candidate: {}\nCell 1: {}, {}\nCell 2 {}, {}\nCell 3: {}, {}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
+                            (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
 
                     List<CellIndex> blockCells = SolverHelper.makeIndexesForBlockByCellIndex(
                             candidateList.get(0).getRow(), candidateList.get(0).getCol());
@@ -402,10 +404,10 @@ public class Solver {
             switch (candidateList.size()) {
             case 2:
                 if (SolverHelper.inSameRow(candidateList.get(0), candidateList.get(1))) {
-                    //System.out.printf(
-                    //      "Block has 2 candidates also in same row. Candidate: %d\nCell 1: %d,%d\nCell 2: %d,%d\n",
-                    //      (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-                    //      (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
+                    logger.debug(
+                            "Block has 2 candidates also in same row. Candidate: {}\nCell 1: {},{}\nCell 2: {},{}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
 
                     // List<CellIndex> rowCells =
                     // SolverHelper.makeIndexesForRow(candidateList.get(0).getCol());
@@ -414,10 +416,10 @@ public class Solver {
                         changed = true;
                 }
                 if (SolverHelper.inSameCol(candidateList.get(0), candidateList.get(1))) {
-                    //System.out.printf(
-                    //      "Block has 2 candidates also in same col. Candidate: %d\nCell 1: %d,%d\nCell 2: %d,%d\n",
-                    //      (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-                    //      (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
+                    logger.debug(
+                            "Block has 2 candidates also in same col. Candidate: {}\nCell 1: {},{}\nCell 2: {},{}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1));
 
                     List<CellIndex> colCells = SolverHelper.makeIndexesForCol(candidateList.get(0).getCol());
                     if (removeCandidateFromRestOfGroup(k, candidateList, colCells))
@@ -426,22 +428,22 @@ public class Solver {
                 break;
             case 3:
                 if (SolverHelper.inSameRow(candidateList.get(0), candidateList.get(1), candidateList.get(2))) {
-//                  System.out.printf(
-//                          "Block has 3 candidates also in same row. Candidate: %d\nCell 1: %d,%d\nCell 2:%d,%d\nCell 3: %d, %d\n",
-//                          (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-//                          (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
-//                          (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
+                    logger.debug(
+                            "Block has 3 candidates also in same row. Candidate: {}\nCell 1: {},{}\nCell 2:{},{}\nCell 3: {}, {}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
+                            (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
 
                     List<CellIndex> rowCells = SolverHelper.makeIndexesForRow(candidateList.get(0).getRow());
                     if (removeCandidateFromRestOfGroup(k, candidateList, rowCells))
                         changed = true;
                 }
                 if (SolverHelper.inSameCol(candidateList.get(0), candidateList.get(1), candidateList.get(2))) {
-//                  System.out.printf(
-//                          "Block has 3 candidates also in same col. Candidate: %d\nCell 1: %d,%d\nCell 2:%d,%d\nCell 3: %d, %d\n",
-//                          (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
-//                          (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
-//                          (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
+                    logger.debug(
+                            "Block has 3 candidates also in same col. Candidate: {}\nCell 1: {},{}\nCell 2:{},{}\nCell 3: {}, {}\n",
+                            (k + 1), (candidateList.get(0).getRow() + 1), (candidateList.get(0).getCol() + 1),
+                            (candidateList.get(1).getRow() + 1), (candidateList.get(1).getCol() + 1),
+                            (candidateList.get(2).getRow() + 1), (candidateList.get(2).getCol() + 1));
                     List<CellIndex> colCells = SolverHelper.makeIndexesForCol(candidateList.get(0).getCol());
                     if (removeCandidateFromRestOfGroup(k, candidateList, colCells))
                         changed = true;
@@ -485,8 +487,8 @@ public class Solver {
                 if (candidates[colCell.getRow()][colCell.getCol()].contains(candidateToRemove)) {
                     candidates[colCell.getRow()][colCell.getCol()].remove(candidateToRemove);
                     changed = true;
-                    //System.out.printf("Removed candidate: %d from cell %d,%d\n", (candidateToRemove + 1),
-                    //      (colCell.getRow() + 1), (colCell.getCol() + 1));
+                    logger.debug("Removed candidate: {} from cell {},{}\n", (candidateToRemove + 1),
+                            (colCell.getRow() + 1), (colCell.getCol() + 1));
                 }
             }
         }
@@ -505,7 +507,8 @@ public class Solver {
                     Object[] candidatesAsArray = candidateSet.toArray();
                     Integer theCandidate = (Integer) candidatesAsArray[0];
                     updateCellValueAndCandidates(i, j, (theCandidate + 1));
-                    //System.out.printf("Single candidate: %d at %d,%d\n", (theCandidate + 1), (i + 1), (j + 1));
+                    logger.debug(
+                            "Single candidate: {} at {},{}\n", (theCandidate + 1), (i + 1), (j + 1));
                     return true;
                 }
             }
@@ -532,7 +535,6 @@ public class Solver {
         List<CellIndex> blockIndexes = SolverHelper.makeIndexesForBlockByCellIndex(row, col);
         updateCandidatesForSingle(blockIndexes, value - 1);
     }
-
 
     /*
      * Removes the value as a possible candidate from each cell in indexes.
@@ -592,7 +594,6 @@ public class Solver {
         return changed;
     }
 
-
     private boolean removeCandidatesExcept(List<CellIndex> cells, List<Integer> values) {
 
         int row = -1;
@@ -618,7 +619,7 @@ public class Solver {
                     valuesToRemove.add(value);
             }
 
-            //remove the values from the candidate set.
+            // remove the values from the candidate set.
             for (int v : valuesToRemove) {
                 candidateSet.remove(v);
             }
@@ -673,7 +674,7 @@ public class Solver {
                 if (candidates[row][col].contains(valueToRemove)) {
                     candidates[row][col].remove(valueToRemove);
                     changed = true;
-                    //System.out.printf("Removed candidate %d from cell %d, %d\n", valueToRemove, row, col);
+                    logger.debug("Removed candidate {} from cell {}, {}\n", valueToRemove, row, col);
                 }
             }
         }
@@ -720,15 +721,15 @@ public class Solver {
         List<Integer> cellCandidates = getAllCandidates(indexes);
         int n = cellCandidates.size();
 
-        //Use a bit-shifting algorithm to create all of the subsets of
-        //the values in indexes. If the subset has 2, 3, or 4 elements
-        //we will look for hidden and naked tuples. We don't do this for
-        //tuples of size 1 because they are easily removed in another step.
-        //We don't do this for values > 4 because it is not necessary.
+        // Use a bit-shifting algorithm to create all of the subsets of
+        // the values in indexes. If the subset has 2, 3, or 4 elements
+        // we will look for hidden and naked tuples. We don't do this for
+        // tuples of size 1 because they are easily removed in another step.
+        // We don't do this for values > 4 because it is not necessary.
         for (int i = 0; i < (1 << n); i++) {
-            
+
             int bitCount = Integer.bitCount(i);
-            if (bitCount == 2|| bitCount == 3 || bitCount == 4) {
+            if (bitCount == 2 || bitCount == 3 || bitCount == 4) {
                 List<Integer> subsetsInt = new ArrayList<>();
                 for (int j = 0; j < n; j++) {
                     if ((i & (1 << j)) > 0) {
@@ -775,7 +776,8 @@ public class Solver {
                     // if no guess and has the value (we know it's the only value since there is
                     // only 1)
                     if ((values[row][col] == 0) && (candidates[row][col].contains(a))) {
-                        //System.out.printf("Cell %d,%d: has the only %d in the group.\n", (row + 1), (col + 1), (a + 1));
+                        logger.debug("Cell {},{}: has the only {} in the group.\n", (row + 1), (col + 1),
+                                (a + 1));
                         updateCellValueAndCandidates(row, col, (a + 1));
                         changed = true;
                     }

@@ -9,7 +9,7 @@ public class SolverHelper {
 
         StringBuilder sb = new StringBuilder();
         // for each row
-        String rowDelimiter = " ------- ------- -------\n";
+        String rowDelimiter = "\n ------- ------- -------\n";
         sb.append(rowDelimiter);
         for (int i = 0; i < Sudoku.NUM_ROWS; i++) {
             // for each cell
