@@ -95,8 +95,7 @@ public class SolverHelper {
     public static CellIndex getBlockIndexFromCellIndex(CellIndex cellIndex) {
         int blockRow = cellIndex.getRow() / 3;
         int blockCol = cellIndex.getCol() / 3;
-        CellIndex blockIndex = new CellIndex(blockRow, blockCol);
-        return blockIndex;
+        return new CellIndex(blockRow, blockCol);
     }
 
     public static boolean inSameBlock(CellIndex a, CellIndex b) {
