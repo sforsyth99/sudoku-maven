@@ -2,7 +2,9 @@
 
 Welcome to a small project that lets you play Sudoku in a standalone Java app.
 
-![Sudoku Game](https://i.imgur.com/JootK7X.png)
+<div style="text-align:center;">
+  <img src="https://i.imgur.com/JootK7X.png" alt="Sudoku Puzzle" height="400">
+</div>
 
 ### Project status
 
