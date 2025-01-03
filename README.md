@@ -56,8 +56,7 @@ becuase most people would probably rather play Sudoku online.
 
 Here are some changes I'd like to make:
 
-* There is code in place to solve Sudoku puzzles. The solution could be hardcoded with the puzzle, and the solver could be moved to a Sudoku generator project.
-* This project uses the Swing for the UI. I may update it to use JavaFX, but I then again I might not bother if I convert this to a web app.
+* Soliving the puzzle is slow. It would probably make more sense to provide the solution along with the original Sudoku puzzle, and use a different process to generate sudoku puzzles. 
+* This project uses the Swing for the UI (I know, I know...) I would update it to use JavaFX, but I I'm going to convert this to a web app, so probably won't bother. 
 * The game only contains a few hard-coded Sudoku puzzles. I could use a Sudoku generator to create more.
-* Solving a puzzle is slow. I could run the solver in a thread, however, I'd rather just store the Sudoku solutions and use the solver as part of the Sudoku generator.
-* I will add an on-screen keyboard, timer, hints, and a way to choose the difficulty level.
+* Add an on-screen keyboard, timer, hints, and a way to choose the difficulty level.
